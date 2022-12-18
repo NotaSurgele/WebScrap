@@ -29,8 +29,11 @@ def get_texts(soup):
 
 if __name__ == "__main__":
     index = 1
-    for i in range(1, len(sys.argv)):
-        data = html_content(sys.argv[i])
+    f = open(sys.argv[1], "r")
+    links = f.read().split("\n")
+
+    for link in links:
+        data = html_content(link)
         soup = get_instance(html_doc=data)
         infos = get_links(soup)
         for link, title in infos:
