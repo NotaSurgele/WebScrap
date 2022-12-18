@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup
+import sys
 import requests
 
 def html_content(link):
@@ -16,22 +17,26 @@ def get_links(soup):
     for a in soup.find_all("a"):
         link = a.get("href")
         if link.__contains__("https://") and not link.__contains__("google") and not link.__contains__("pdf"):
-            links.append(link)
+            title = a.getText()
+            links.append((link, title))
     return links
 
 def get_texts(soup):
     for p in soup.find_all("p"):
         print(p.getText())
 
-if __name__ == "__main__":
-    data = html_content("https://scholar.google.com/scholar?as_ylo=2022&q=metaverse&hl=fr&as_sdt=0,5")
-    soup = get_instance(html_doc=data)
-    links = get_links(soup)
-    index = 1
-    for link in links:
-        print("====================== Article " + str(index) + " ======================")
-        html = html_content(link)
-        soup = get_instance(html_doc=html)
-        get_texts(soup=soup)
-        print("========================================================\n\n")
+#"https://scholar.google.com/scholar?hl=fr&as_sdt=0%2C5&as_ylo=2022&q=metaverse+opinion&btnG="
 
+if __name__ == "__main__":
+    index = 1
+    for i in range(1, len(sys.argv)):
+        data = html_content(sys.argv[i])
+        soup = get_instance(html_doc=data)
+        infos = get_links(soup)
+        for link, title in infos:
+            print("====================== Article " + str(index) + " " + link + " " + title + " =======\n\n")
+            html = html_content(link)
+            soup = get_instance(html_doc=html)
+            get_texts(soup=soup)
+            print("================================================================================================================\n\n")
+            index += 1
